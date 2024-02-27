@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>면접 질문 관리자 - 인스타 스타일</title>
+<style>
+    .question-item {
+        margin-bottom: 20px; /* 각 질문 사이의 간격 */
+    }
+    .question-item p {
+        margin: 5px 0; /* p 태그 내부의 마진 조정 */
+    }
+    .question-item .question-text {
+        font-size: 16px; /* 질문 내용의 글꼴 크기 */
+        font-weight: bold; /* 질문 내용을 두껍게 */
+    }
+    .question-item .question-detail {
+        font-size: 14px; /* 유형과 레벨의 글꼴 크기 조정 */
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #fafafa;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Adjusted to align items at the start */
+        height: calc(100vh - 40px);
+    }
+    .container {
+        position: relative; /* For positioning buttons */
+        width: 90%;
+        max-width: 350px;
+        background: white;
+        border: 1px solid #dbdbdb;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .top-right-buttons {
+        position: absolute;
+        top: 10px; /* Adjusted for top right position */
+        right: 10px; /* Adjusted for top right position */
+        display: flex;
+        gap: 10px;
+    }
+    .input-field, .select-field, .btn, .question-box, .json-box {
+        width: 100%;
+        padding: 8px 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #dbdbdb;
+        box-sizing: border-box;
+    }
+    .input-field, .select-field {
+        background: #fafafa;
+    }
+    .btn {
+        background-color: #3897f0;
+        color: white;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #3086d9;
+    }
+    .btn-small {
+        padding: 4px 6px; /* Smaller padding for smaller buttons */
+        font-size: 12px; /* Smaller font size for text */
+    }
+    .question-box, .json-box {
+        background: #fafafa;
+        display: none; /* Initially hidden */
+        overflow-y: auto;
+        max-height: 500px; /* 높이를 250px로 조정 */
+        font-size: 14px;
+        color: #262626;
+    }
+    .btn-group {
+        display: flex;
+        justify-content: space-between;
+    }
+    .btn-group .btn {
+        flex-grow: 1;
+        margin: 5px;
+    }
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+
+    <div class="container">
+        <div class="top-right-buttons">
+            <button onclick="saveQuestions()" class="btn btn-small">Save</button>
+            <button onclick="loadQuestions()" class="btn btn-small">Load</button>
+        </div>
+        <input type="text" id="inputQuestion" class="input-field" placeholder="Enter a question...">
+        <select id="questionType" class="select-field">
+            <option value="">선택 안함</option>
+            <option value="Network">네트워크</option>
+            <option value="DB">DB</option>
+            <option value="DataStructure">자료구조</option>
+            <option value="OS">운영체제</option>
+            <option value="Spring">Spring</option>
+            <option value="Java">Java</option>
+            <option value="Other">기타</option>
+        </select>
+        
+        <input type="text" id="userId" class="input-field" placeholder="User ID...">
+        <input type="number" id="questionLevel" class="input-field" placeholder="Question Level (1-5)" value="3">
+        <div class="btn-group">
+            <button onclick="addQuestion()" class="btn">Add Question</button>
+            <button onclick="showRandomQuestion()" class="btn">Random Question</button>
+            <button onclick="showAllQuestions()" class="btn">View All Questions</button>
+        </div>
+        <div class="question-box" id="questionBox"></div>
+        <div class="json-box" id="jsonBox"></div>
+        <button onclick="copyJSON()" class="btn hidden" id="copyBtn">Copy JSON</button>
+    </div>
+    
+    <script>
+    let questions = [];
+    
+    function addQuestion() {
+        const inputQuestion = document.getElementById('inputQuestion').value;
+        const questionType = document.getElementById('questionType').value;
+        const userId = document.getElementById('userId').value;
+        const questionLevel = parseInt(document.getElementById('questionLevel').value, 10);
+    
+        if(inputQuestion && questionType && userId && questionLevel) {
+            questions.push({
+                question: inputQuestion,
+                type: questionType,
+                userId: userId,
+                level: questionLevel
+            });
+            // Clear input fields
+            document.getElementById('inputQuestion').value = '';
+            alert('질문이 추가되었습니다.');
+        } else {
+            alert('모든 필드를 채워주세요.');
+        }
+    }
+    
+    function showRandomQuestion() {
+        const userId = document.getElementById('userId').value;
+        const questionType = document.getElementById('questionType').value;
+        const questionLevelInput = document.getElementById('questionLevel').value;
+        const questionLevel = parseInt(questionLevelInput, 10);
+
+        // 필터링 조건에서 입력값이 없을 경우 해당 조건을 무시하도록 수정
+        const filteredQuestions = questions.filter(q => 
+            (userId === '' || q.userId === userId) && 
+            (questionType === '' || q.type === questionType) && 
+            (questionLevelInput === '' || q.level === questionLevel)
+        );
+        
+        if(filteredQuestions.length > 0) {
+            const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
+            const selectedQuestion = filteredQuestions[randomIndex];
+            const questionBox = document.getElementById('questionBox');
+            
+            // 기존 질문들을 제거하고 랜덤한 질문 하나만 표시
+            questionBox.innerHTML = `<div class="question-item">
+                                        <p class="question-detail"><strong>유형:</strong> ${selectedQuestion.type}
+                                        <strong>레벨:</strong> ${selectedQuestion.level}</p>
+                                        <p class="question-text">${selectedQuestion.question}</p>
+                                    </div>`;
+            questionBox.style.display = 'block';
+        } else {
+            alert('조건에 맞는 질문이 없습니다.');
+        }
+    }
+
+
+
+    function saveQuestions() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "interview_questions.json");
+        document.body.appendChild(downloadAnchorNode); // Firefox에서 필요
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    
+    function downloadQuestions() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "questions.json");
+        document.body.appendChild(downloadAnchor); // Required for Firefox
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function loadFileQuestions() {
+        const fileInput = document.getElementById('fileInput');
+        if ('files' in fileInput && fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                questions = JSON.parse(event.target.result);
+                showAllQuestions(); // Update the display after loading
+                alert('질문이 성공적으로 불러와졌습니다.');
+            };
+            reader.onerror = function() {
+                alert('파일을 불러오는 데 실패했습니다.');
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function showAllQuestions() {
+        const questionBox = document.getElementById('questionBox');
+        questionBox.innerHTML = questions.map(q => 
+            `<div class="question-item">
+                <p class="question-detail"><strong>유형:</strong> ${q.type}
+                <strong>레벨:</strong> ${q.level}</p>
+                <p class="question-text">${q.question}</p>
+            </div>`
+        ).join('');
+        questionBox.style.display = 'block';
+    }
+
+    function copyJSON() {
+        const jsonStr = JSON.stringify(questions, null, 2);
+        navigator.clipboard.writeText(jsonStr).then(() => {
+            alert('JSON has been copied to clipboard.');
+        }).catch(err => {
+            console.error('Error in copying text: ', err);
+        });
+    }
+    
+    </script>
+    
+    </body>
+    </html>
