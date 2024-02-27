@@ -170,10 +170,12 @@
             const selectedQuestion = filteredQuestions[randomIndex];
             const questionBox = document.getElementById('questionBox');
             
-            // 기존 질문들을 제거하고 랜덤한 질문 하나만 표시
             questionBox.innerHTML = `<div class="question-item">
-                                        <p class="question-detail"><strong>유형:</strong> ${selectedQuestion.type}
-                                        <strong>레벨:</strong> ${selectedQuestion.level}</p>
+                                        <p class="question-detail">
+                                            <strong>유형:</strong> ${selectedQuestion.type}
+                                            <strong>레벨:</strong> ${selectedQuestion.level}
+                                            <strong>user id:</strong> ${selectedQuestion.userId}
+                                        </p>
                                         <p class="question-text">${selectedQuestion.question}</p>
                                     </div>`;
             questionBox.style.display = 'block';
@@ -254,9 +256,14 @@
         const questionBox = document.getElementById('questionBox');
         questionBox.innerHTML = questions.map(q => 
             `<div class="question-item">
-                <p class="question-detail"><strong>유형:</strong> ${q.type}
-                <strong>레벨:</strong> ${q.level}</p>
-                <p class="question-text">${q.question}</p>
+                <p class="question-detail">
+                    <strong>유형:</strong> ${q.type},
+                    <strong>레벨:</strong> ${q.level},
+                    <strong>id:</strong> ${q.userId}
+                </p>
+                <p class="question-text">
+                    ${q.question}      
+                </p>
             </div>`
         ).join('');
         questionBox.style.display = 'block';
