@@ -98,7 +98,7 @@
     <div class="container">
         <div class="top-right-buttons">
             <button onclick="saveQuestions()" class="btn btn-small">Save</button>
-            <button onclick="loadQuestions()" class="btn btn-small">Load</button>
+            <button onclick="loadQuestions()" id="loadQuestionsBtn" class="btn btn-small">Load</button>
         </div>
         <input type="text" id="inputQuestion" class="input-field" placeholder="Enter a question...">
         <select id="questionType" class="select-field">
@@ -123,9 +123,12 @@
         <div class="json-box" id="jsonBox"></div>
         <button onclick="copyJSON()" class="btn hidden" id="copyBtn">Copy JSON</button>
     </div>
-    
+    <input type="file" id="fileInput" style="display: none;" accept=".json"/>
+
     <script>
     let questions = [];
+
+    
     
     function addQuestion() {
         const inputQuestion = document.getElementById('inputQuestion').value;
@@ -178,7 +181,14 @@
         }
     }
 
+    
+    document.getElementById('loadQuestionsBtn').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
 
+    document.getElementById('fileInput').addEventListener('change', function() {
+        loadQuestions();
+    });
 
     function saveQuestions() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(questions));
@@ -201,14 +211,14 @@
         downloadAnchor.remove();
     }
 
-    function loadFileQuestions() {
+    function loadQuestions() {
         const fileInput = document.getElementById('fileInput');
         if ('files' in fileInput && fileInput.files.length > 0) {
             const file = fileInput.files[0];
             const reader = new FileReader();
             reader.onload = function(event) {
                 questions = JSON.parse(event.target.result);
-                showAllQuestions(); // Update the display after loading
+                showAllQuestions(); 
                 alert('질문이 성공적으로 불러와졌습니다.');
             };
             reader.onerror = function() {
@@ -216,6 +226,8 @@
             };
             reader.readAsText(file);
         }
+        
+        fileInput.value = '';
     }
 
     function showAllQuestions() {
