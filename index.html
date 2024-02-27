@@ -41,8 +41,8 @@
     }
     .top-right-buttons {
         position: absolute;
-        top: 10px; /* Adjusted for top right position */
-        right: 10px; /* Adjusted for top right position */
+        top: 5px; /* Adjusted for top right position */
+        right: 5px; /* Adjusted for top right position */
         display: flex;
         gap: 10px;
     }
@@ -98,7 +98,8 @@
     <div class="container">
         <div class="top-right-buttons">
             <button onclick="saveQuestions()" class="btn btn-small">Save</button>
-            <button onclick="loadQuestions()" id="loadQuestionsBtn" class="btn btn-small">Load</button>
+            <button onclick="loadQuestionsFromLocal()" id="loadQuestionsBtn" class="btn btn-small">Local </button>
+            <button onclick="loadQuestionsFromURL()" class="btn btn-small">Server </button>
         </div>
         <input type="text" id="inputQuestion" class="input-field" placeholder="Enter a question...">
         <select id="questionType" class="select-field">
@@ -211,7 +212,25 @@
         downloadAnchor.remove();
     }
 
-    function loadQuestions() {
+    async function loadQuestionsFromURL() {
+        const url = 'https://raw.githubusercontent.com/Curry4182/interview/main/interview-questions/questions.json';
+        
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            questions = await response.json();
+            showAllQuestions(); 
+            
+            alert('질문이 성공적으로 불러와졌습니다.');
+        } catch (error) {
+            console.error('데이터를 불러오는 데 실패했습니다:', error);
+            alert('데이터를 불러오는 데 실패했습니다.');
+        }
+    }
+
+    function loadQuestionsFromLocal() {
         const fileInput = document.getElementById('fileInput');
         if ('files' in fileInput && fileInput.files.length > 0) {
             const file = fileInput.files[0];
@@ -229,6 +248,7 @@
         
         fileInput.value = '';
     }
+
 
     function showAllQuestions() {
         const questionBox = document.getElementById('questionBox');
