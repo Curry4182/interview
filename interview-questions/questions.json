@@ -1,0 +1,44 @@
+[
+    {
+        "question": "이상 현상의 종류에 대해 말씀해주세요",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    },
+    {
+        "question": "정규화란 무엇이고 왜 필요한가요?",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    },
+    {
+        "question": "제1 정규형 부터 제3정규형에 대해 말해주세요",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    },
+    {
+        "question": "역정규화에 대해 설명해주세요",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    },
+    {
+        "question": "DB 커넥션 풀은 무엇이고 왜 필요한가요?",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    },
+    {
+        "question": "DB 커넥션 풀을 사용할 때 고려해야할 사항이 있을까요?",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    },
+    {
+        "question": "DB 커넥션 풀에서 풀 크기를 너무 적게하거나 너무 크게 할 때 일어나는 부작용에 대해 설명해주세요",
+        "type": "DB",
+        "userId": "curry4182",
+        "level": 3
+    }
+]
